@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OMKE KOMBAT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="menu">
+        <h1>PILIH PETARUNG</h1>
+        <div class="cards-container">
+            <div class="card" onclick="selectChar('balil')">
+                <img src="char/balil/balil-card.jpg" alt="Balil">
+                <div class="char-name">BALIL</div>
+            </div>
+            <div class="card" onclick="selectChar('pigai')">
+                <img src="char/pigai/pigai-card.jpg" alt="Pigai">
+                <div class="char-name">PIGAI</div>
+            </div>
+            <div class="card locked">
+                <img src="char/superwok/superwok-card.jpg" alt="Superwok">
+                <div class="char-name">SUPERWOK</div>
+                <div class="lock-icon">🔒</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game">
+        <div id="ui-top">
+            <div id="hp-player-container">
+                <div id="hp-player"></div>
+            </div>
+            <div id="hp-enemy-container">
+                <div id="hp-enemy"></div>
+            </div>
+        </div>
+        <button id="back-btn" onclick="goBack()">Kembali</button>
+        <div id="zoom-controls">
+            <button onclick="zoomUI(0.1)">+</button>
+            <button onclick="zoomUI(-0.1)">-</button>
+        </div>
+        <div id="ground"></div>
+        <div id="player"></div>
+        <div id="enemy"></div>
+        <div id="controls">
+            <div class="btn-group">
+                <div class="btn" id="btn-left">◀</div>
+                <div class="btn" id="btn-right">▶</div>
+            </div>
+            <div class="btn-group">
+                <div class="btn" id="btn-punch">👊</div>
+            </div>
+        </div>
+        <div id="game-over-screen" style="display: none;">
+            <h1 id="game-over-title">MENANG</h1>
+            <button onclick="goBack()">KEMBALI KE MENU</button>
+        </div>
+    </div>
+
+    <script>
+        const chars = {
+            balil: {
+                stance: 'char/balil/balil-stance.png',
+                run: 'char/balil/balil-run.webp',
+                punch: 'char/balil/balil-punch.webp'
+            },
+            pigai: {
+                stance: 'char/pigai/pigai-stance.png',
+                run: 'char/pigai/pigai-run.webp',
+                punch: 'char/pigai/pigai-punch.png'
+            }
+        };
+
+        let currentChar = null;
+        let playerX = 100;
+        let pWidth = 200;
+        let windowW = window.innerWidth;
+        let facingRight = true;
+        let isMovingLeft = false;
+        let isMovingRight = false;
+        let isPunching = false;
+        let moveInterval;
+
+        const playerEl = document.getElementById('player');
+        const enemyEl = document.getElementById('enemy');
+        const menuEl = document.getElementById('menu');
+        const gameEl = document.getElementById('game');
+
+        let playerHp = 100;
+        let enemyHp = 100;
+        const damage = 10;
+        let enemyChar = null;
+        let enemyX = 500;
+        let enemyFacingRight = false;
+        let enemyAction = 'stance';
+        let enemyPunchTimer = 0;
+        let gameActive = true;
+        let playerPunchHit = false;
+        let enemyPunchHit = false;
+
+        function updateHpUI() {
+            document.getElementById('hp-player').style.width = Math.max(0, playerHp) + '%';
+            document.getElementById('hp-enemy').style.width = Math.max(0, enemyHp) + '%';
+        }
+
+        const backgrounds = [
+            'background/bg-gorong.webp',
+            'background/bg-hambalang.webp',
+            'background/bg-ikn.webp',
+            'background/bg-sawit.webp'
+        ];
+
+        function selectChar(charName) {
+            const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+            gameEl.style.setProperty('--bg-image', `url('${randomBg}')`);
+
+            currentChar = charName;
+            enemyChar = Object.keys(chars).find(c => c !== currentChar);
+
+            menuEl.style.display = 'none';
+            gameEl.style.display = 'block';
+            playerX = window.innerWidth * 0.1;
+            enemyX = window.innerWidth * 0.7;
+            facingRight = true;
+            enemyFacingRight = false;
+
+            playerHp = 100;
+            enemyHp = 100;
+            gameActive = false;
+            document.getElementById('game-over-screen').style.display = 'none';
+            updateHpUI();
+
+            updatePlayerChar();
+            updateTransform();
+
+            // Inisialisasi properti musuh agar segera terlihat
+            enemyEl.style.backgroundImage = `url('${chars[enemyChar]['stance']}')`;
+            enemyEl.style.display = 'block';
+
+            updateEnemyTransform();
+            
+            // Render awal dan jalankan loop setelah 2 detik freeze
+            startGameLoop();
+            if (window.startFreezeTimer) clearTimeout(window.startFreezeTimer);
+            window.startFreezeTimer = setTimeout(() => {
+                gameActive = true;
+            }, 2000);
+        }
+
+        function goBack() {
+            if (window.startFreezeTimer) clearTimeout(window.startFreezeTimer);
+            gameEl.style.display = 'none';
+            menuEl.style.display = 'flex';
+            document.getElementById('game-over-screen').style.display = 'none';
+            stopGameLoop();
+        }
+
+        function setAction(action) {
+            if (!currentChar) return;
+            playerEl.style.backgroundImage = `url('${chars[currentChar][action]}')`;
+        }
+
+        function updateTransform() {
+            playerEl.style.left = playerX + 'px';
+            if (facingRight) {
+                playerEl.className = '';
+            } else {
+                playerEl.className = 'flipped';
+            }
+        }
+
+        function handleInput() {
+            if (isPunching) {
+                setAction('punch');
+            } else if (isMovingLeft || isMovingRight) {
+                setAction('run');
+                if (isMovingLeft) {
+                    playerX -= 20; // Speed
+                    facingRight = false;
+                    if (playerX < -80) playerX = -80;
+                }
+                if (isMovingRight) {
+                    playerX += 20; // Speed
+                    facingRight = true;
+                    if (playerX > window.innerWidth - (pWidth - 80)) playerX = window.innerWidth - (pWidth - 80);
+                }
+                updateTransform();
+            } else {
+                setAction('stance');
+            }
+        }
+
+        function updateEnemyTransform() {
+            if (!enemyEl) return;
+            enemyEl.style.left = enemyX + 'px';
+            if (enemyFacingRight) enemyEl.className = '';
+            else enemyEl.className = 'flipped';
+        }
+
+        function handleEnemyAI() {
+            if (!enemyChar) return;
+            const distance = enemyX - playerX;
+            const absDist = Math.abs(distance);
+
+            if (absDist > 140) {
+                enemyAction = 'run';
+                if (distance > 0) {
+                    enemyX -= 18;
+                    enemyFacingRight = false;
+                } else {
+                    enemyX += 18;
+                    enemyFacingRight = true;
+                }
+            } else {
+                if (Math.random() < 0.1) {
+                    enemyAction = 'punch';
+                    enemyPunchTimer = 10;
+                } else if (enemyPunchTimer <= 0) {
+                    enemyAction = 'stance';
+                }
+            }
+            if (enemyPunchTimer > 0) {
+                enemyAction = 'punch';
+                enemyPunchTimer--;
+            }
+            enemyEl.style.backgroundImage = `url('${chars[enemyChar][enemyAction]}')`;
+        }
+
+        function checkHit() {
+            const distance = Math.abs(playerX - enemyX);
+            const reach = 150;
+            const knockbackDist = 200;
+
+            if (isPunching && !playerPunchHit) {
+                if (distance < reach && ((facingRight && enemyX > playerX) || (!facingRight && enemyX < playerX))) {
+                    enemyHp -= damage;
+                    playerPunchHit = true;
+                    new Audio('ugh.mp3').play().catch(e => console.log(e));
+
+                    // Knockback enemy
+                    if (facingRight) enemyX += knockbackDist;
+                    else enemyX -= knockbackDist;
+
+                    if (enemyX < -80) enemyX = -80;
+                    if (enemyX > window.innerWidth - (pWidth - 80)) enemyX = window.innerWidth - (pWidth - 80);
+
+                    checkGameOver();
+                }
+            }
+            if (!isPunching) playerPunchHit = false;
+
+            if (enemyAction === 'punch' && !enemyPunchHit) {
+                if (distance < reach && ((enemyFacingRight && playerX > enemyX) || (!enemyFacingRight && playerX < enemyX))) {
+                    playerHp -= damage;
+                    enemyPunchHit = true;
+                    new Audio('ugh.mp3').play().catch(e => console.log(e));
+
+                    // Knockback player
+                    if (enemyFacingRight) playerX += knockbackDist;
+                    else playerX -= knockbackDist;
+
+                    if (playerX < -80) playerX = -80;
+                    if (playerX > window.innerWidth - (pWidth - 80)) playerX = window.innerWidth - (pWidth - 80);
+
+                    checkGameOver();
+                }
+            }
+            if (enemyAction !== 'punch') enemyPunchHit = false;
+            updateHpUI();
+        }
+
+        function checkGameOver() {
+            if (playerHp <= 0 || enemyHp <= 0) {
+                gameActive = false;
+                const goScreen = document.getElementById('game-over-screen');
+                const goTitle = document.getElementById('game-over-title');
+
+                if (playerHp <= 0) {
+                    goTitle.innerText = "KAMU KALAH!";
+                    goTitle.className = "lose-text";
+                } else {
+                    goTitle.innerText = "KAMU MENANG!";
+                    goTitle.className = "win-text";
+                }
+
+                setTimeout(() => {
+                    goScreen.style.display = 'flex';
+                }, 500);
+            }
+        }
+
+        function gameLoop() {
+            if (!gameActive) return;
+            handleInput();
+            handleEnemyAI();
+            checkHit();
+            updateTransform();
+            updateEnemyTransform();
+        }
+
+        function startGameLoop() {
+            clearInterval(moveInterval);
+            moveInterval = setInterval(gameLoop, 1000 / 40); // ~40 FPS for smooth movement
+            windowW = window.innerWidth;
+        }
+
+        function stopGameLoop() {
+            clearInterval(moveInterval);
+            isMovingLeft = false;
+            isMovingRight = false;
+            isPunching = false;
+        }
+
+        // Controls
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+        const btnPunch = document.getElementById('btn-punch');
+
+        function addInputListeners(el, isLeft, isRight, isP) {
+            const start = (e) => {
+                e.preventDefault();
+                if (isLeft) isMovingLeft = true;
+                if (isRight) isMovingRight = true;
+                if (isP) isPunching = true;
+            };
+            const end = (e) => {
+                e.preventDefault();
+                if (isLeft) isMovingLeft = false;
+                if (isRight) isMovingRight = false;
+                if (isP) isPunching = false;
+            };
+
+            el.addEventListener('mousedown', start, { passive: false });
+            el.addEventListener('touchstart', start, { passive: false });
+
+            el.addEventListener('mouseup', end, { passive: false });
+            el.addEventListener('mouseleave', end, { passive: false });
+            el.addEventListener('touchend', end, { passive: false });
+            el.addEventListener('touchcancel', end, { passive: false });
+        }
+
+        addInputListeners(btnLeft, true, false, false);
+        addInputListeners(btnRight, false, true, false);
+        addInputListeners(btnPunch, false, false, true);
+
+        // Keyboard support
+        window.addEventListener('keydown', (e) => {
+            if (gameEl.style.display !== 'block') return;
+            if (e.key === 'ArrowLeft' || e.key === 'a') isMovingLeft = true;
+            if (e.key === 'ArrowRight' || e.key === 'd') isMovingRight = true;
+            if (e.code === 'Space' || e.key === 'j') isPunching = true;
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') isMovingLeft = false;
+            if (e.key === 'ArrowRight' || e.key === 'd') isMovingRight = false;
+            if (e.code === 'Space' || e.key === 'j') isPunching = false;
+        });
+
+        window.addEventListener('resize', () => windowW = window.innerWidth);
+
+        let currentZoom = parseFloat(localStorage.getItem('savedZoom')) || 1;
+
+        // Terapkan zoom yang tersimpan saat pertama kali dimuat
+        window.addEventListener('DOMContentLoaded', () => zoomUI(0));
+
+        function zoomUI(amount) {
+            currentZoom += amount;
+            if (currentZoom < 0.5) currentZoom = 0.5;
+            if (currentZoom > 2.5) currentZoom = 2.5;
+
+            localStorage.setItem('savedZoom', currentZoom);
+
+            // Hapus transform pada controls jika ada
+            document.getElementById('controls').style.transform = "none";
+
+            // Lakukan zoom pada grup tombol secara individual dengan origin yang sesuai
+            const groups = document.querySelectorAll('.btn-group');
+            if (groups[0]) {
+                groups[0].style.transform = `scale(${currentZoom})`;
+                groups[0].style.transformOrigin = 'bottom left';
+            }
+            if (groups[1]) {
+                groups[1].style.transform = `scale(${currentZoom})`;
+                groups[1].style.transformOrigin = 'bottom right';
+            }
+        }
+
+        function updatePlayerChar() {
+            setAction('stance');
+            playerEl.style.left = playerX + 'px';
+        }
+    </script>
+</body>
+
+</html>
