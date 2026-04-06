@@ -70,6 +70,29 @@ html {
     justify-content: center;
 }
 
+.title-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.orientation-hint {
+    color: #ffcc00;
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    opacity: 0.9;
+    letter-spacing: 1px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
 #menu h1 {
     color: #ffcc00;
     text-shadow: 3px 3px 6px #aa0000;
@@ -389,6 +412,10 @@ html {
 @media screen and (max-height: 450px) {
     #menu h1 {
         font-size: 24px;
+    }
+
+    .orientation-hint {
+        font-size: 10px;
     }
 
     .menu-header {
