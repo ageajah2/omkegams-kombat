@@ -85,12 +85,6 @@ html {
     text-transform: uppercase;
     opacity: 0.9;
     letter-spacing: 1px;
-    animation: pulse 1.5s infinite ease-in-out;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 0.6; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.05); }
 }
 
 #menu h1 {
@@ -488,7 +482,8 @@ html {
         font-size: 16px;
     }
 
-    #player, #enemy {
+    #player,
+    #enemy {
         width: 240px;
         height: 240px;
     }
@@ -507,8 +502,9 @@ html {
     #ui-top {
         padding: 0 10px;
     }
-    
-    #hp-player-container, #hp-enemy-container {
+
+    #hp-player-container,
+    #hp-enemy-container {
         width: 120px;
     }
 }
