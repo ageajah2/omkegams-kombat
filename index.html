@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <div id="viewport">
 
     <div id="menu">
         <h1>PILIH PETARUNG</h1>
@@ -60,7 +61,7 @@
             <button onclick="goBack()">KEMBALI KE MENU</button>
         </div>
     </div>
-
+    </div>
     <script>
         const chars = {
             balil: {
@@ -76,9 +77,10 @@
         };
 
         let currentChar = null;
+        const viewportEl = document.getElementById('viewport');
         let playerX = 100;
         let pWidth = 200;
-        let windowW = window.innerWidth;
+        let windowW = viewportEl.clientWidth;
         let facingRight = true;
         let isMovingLeft = false;
         let isMovingRight = false;
@@ -123,8 +125,8 @@
 
             menuEl.style.display = 'none';
             gameEl.style.display = 'block';
-            playerX = window.innerWidth * 0.1;
-            enemyX = window.innerWidth * 0.7;
+            playerX = viewportEl.clientWidth * 0.1;
+            enemyX = viewportEl.clientWidth * 0.7;
             facingRight = true;
             enemyFacingRight = false;
 
@@ -186,7 +188,7 @@
                 if (isMovingRight) {
                     playerX += 20; // Speed
                     facingRight = true;
-                    if (playerX > window.innerWidth - (pWidth - 80)) playerX = window.innerWidth - (pWidth - 80);
+                    if (playerX > viewportEl.clientWidth - (pWidth - 80)) playerX = viewportEl.clientWidth - (pWidth - 80);
                 }
                 updateTransform();
             } else {
@@ -246,7 +248,7 @@
                     else enemyX -= knockbackDist;
 
                     if (enemyX < -80) enemyX = -80;
-                    if (enemyX > window.innerWidth - (pWidth - 80)) enemyX = window.innerWidth - (pWidth - 80);
+                    if (enemyX > viewportEl.clientWidth - (pWidth - 80)) enemyX = viewportEl.clientWidth - (pWidth - 80);
 
                     checkGameOver();
                 }
@@ -264,7 +266,7 @@
                     else playerX -= knockbackDist;
 
                     if (playerX < -80) playerX = -80;
-                    if (playerX > window.innerWidth - (pWidth - 80)) playerX = window.innerWidth - (pWidth - 80);
+                    if (playerX > viewportEl.clientWidth - (pWidth - 80)) playerX = viewportEl.clientWidth - (pWidth - 80);
 
                     checkGameOver();
                 }
@@ -305,7 +307,7 @@
         function startGameLoop() {
             clearInterval(moveInterval);
             moveInterval = setInterval(gameLoop, 1000 / 40); // ~40 FPS for smooth movement
-            windowW = window.innerWidth;
+            windowW = viewportEl.clientWidth;
         }
 
         function stopGameLoop() {
@@ -360,7 +362,7 @@
             if (e.code === 'Space' || e.key === 'j') isPunching = false;
         });
 
-        window.addEventListener('resize', () => windowW = window.innerWidth);
+        window.addEventListener('resize', () => windowW = viewportEl.clientWidth);
 
         let currentZoom = parseFloat(localStorage.getItem('savedZoom')) || 1;
 
