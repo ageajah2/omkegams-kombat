@@ -384,3 +384,104 @@ html {
         transform: scale(1);
     }
 }
+
+/* Responsive adjustments for 844x390 and similar small height screens */
+@media screen and (max-height: 450px) {
+    #menu h1 {
+        font-size: 24px;
+    }
+
+    .menu-header {
+        margin-bottom: 15px;
+        gap: 15px;
+    }
+
+    .cards-container {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .card {
+        width: 140px;
+        height: 140px;
+    }
+
+    .char-name {
+        font-size: 12px;
+        padding: 2px 0;
+    }
+
+    .lock-icon {
+        font-size: 24px;
+    }
+
+    #fullscreen-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+
+    #ui-top {
+        top: 8px;
+        padding: 0 15px;
+    }
+
+    #hp-player-container,
+    #hp-enemy-container {
+        width: 130px;
+        height: 12px;
+        border-width: 2px;
+    }
+
+    .btn {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+
+    #controls {
+        bottom: 8px;
+        padding: 0 15px;
+    }
+
+    #back-btn {
+        top: 35px;
+        left: 10px;
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+
+    #zoom-controls {
+        top: 35px;
+        right: 10px;
+    }
+
+    #zoom-controls button {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+
+    #player, #enemy {
+        width: 240px;
+        height: 240px;
+    }
+
+    #game-over-title {
+        font-size: 30px;
+    }
+
+    #game-over-screen button {
+        padding: 10px 25px;
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #ui-top {
+        padding: 0 10px;
+    }
+    
+    #hp-player-container, #hp-enemy-container {
+        width: 120px;
+    }
+}
