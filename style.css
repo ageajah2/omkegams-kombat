@@ -61,11 +61,38 @@ html {
 }
 
 /* Character Selection Menu */
+.menu-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    width: 100%;
+    justify-content: center;
+}
+
 #menu h1 {
     color: #ffcc00;
     text-shadow: 3px 3px 6px #aa0000;
-    margin-bottom: 30px;
+    margin: 0;
     font-size: 40px;
+}
+
+#fullscreen-btn {
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 2px solid #ffcc00;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+#fullscreen-btn:hover {
+    background: #ffcc00;
+    color: #000;
+    transform: scale(1.05);
 }
 
 .cards-container {

@@ -12,7 +12,10 @@
     <div id="viewport">
 
     <div id="menu">
-        <h1>PILIH PETARUNG</h1>
+        <div class="menu-header">
+            <h1>PILIH PETARUNG</h1>
+            <button id="fullscreen-btn" onclick="toggleFullscreen()">Full Screen</button>
+        </div>
         <div class="cards-container">
             <div class="card" onclick="selectChar('balil')">
                 <img src="char/balil/balil-card.jpg" alt="Balil">
@@ -63,6 +66,18 @@
     </div>
     </div>
     <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Terjadi kesalahan saat masuk mode fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
         const chars = {
             balil: {
                 stance: 'char/balil/balil-stance.png',
@@ -103,6 +118,32 @@
         let gameActive = true;
         let playerPunchHit = false;
         let enemyPunchHit = false;
+
+        // Preloading Images
+        function preloadAll() {
+            const allImages = [
+                ...backgrounds,
+                'char/balil/balil-card.jpg',
+                'char/pigai/pigai-card.jpg',
+                'char/superwok/superwok-card.jpg'
+            ];
+
+            // Tambahkan gambar karakter
+            for (let c in chars) {
+                for (let a in chars[c]) {
+                    allImages.push(chars[c][a]);
+                }
+            }
+
+            allImages.forEach(url => {
+                const img = new Image();
+                img.src = url;
+            });
+            console.log("Preloading " + allImages.length + " images...");
+        }
+
+        // Jalankan preload saat window dimuat
+        window.addEventListener('load', preloadAll);
 
         function updateHpUI() {
             document.getElementById('hp-player').style.width = Math.max(0, playerHp) + '%';
