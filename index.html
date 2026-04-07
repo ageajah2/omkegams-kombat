@@ -11,62 +11,69 @@
 <body>
     <div id="viewport">
 
-    <div id="menu">
-        <div class="menu-header">
-            <div class="title-group">
-                <h1>PILIH PETARUNG</h1>
-                <p class="orientation-hint">MOHON MIRINGKAN LAYAR</p>
+        <div id="menu">
+            <div class="menu-header">
+                <div class="title-group">
+                    <h2 class="main-title">OKE GAS KOMBAT</h2>
+                    <h1 class="select-label">PILIH PETARUNG</h1>
+                    <p class="orientation-hint">MOHON MIRINGKAN LAYAR</p>
+                    <div id="win-counter"
+                        style="color: #ffcc00; font-weight: bold; margin-top: 10px; font-size: 18px; text-shadow: 2px 2px 4px #000;">
+                        WINS: 0</div>
+                </div>
+                <button id="fullscreen-btn" onclick="toggleFullscreen()">Full Screen</button>
             </div>
-            <button id="fullscreen-btn" onclick="toggleFullscreen()">Full Screen</button>
+            <div class="cards-container">
+                <div class="card" onclick="selectChar('balil')">
+                    <img src="char/balil/balil-card.jpg" alt="Balil">
+                    <div class="char-name">BALIL</div>
+                </div>
+                <div class="card" onclick="selectChar('pigai')">
+                    <img src="char/pigai/pigai-card.jpg" alt="Pigai">
+                    <div class="char-name">PIGAI</div>
+                </div>
+                <div id="card-superwok" class="card locked">
+                    <img src="char/superwok/superwok-card.jpg" alt="Superwok">
+                    <div class="char-name">SUPERWOK</div>
+                    <div class="lock-icon" id="lock-superwok">
+                        🔒
+                        <div class="unlock-hint" id="hint-superwok">10 WIN</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="cards-container">
-            <div class="card" onclick="selectChar('balil')">
-                <img src="char/balil/balil-card.jpg" alt="Balil">
-                <div class="char-name">BALIL</div>
-            </div>
-            <div class="card" onclick="selectChar('pigai')">
-                <img src="char/pigai/pigai-card.jpg" alt="Pigai">
-                <div class="char-name">PIGAI</div>
-            </div>
-            <div class="card locked">
-                <img src="char/superwok/superwok-card.jpg" alt="Superwok">
-                <div class="char-name">SUPERWOK</div>
-                <div class="lock-icon">🔒</div>
-            </div>
-        </div>
-    </div>
 
-    <div id="game">
-        <div id="ui-top">
-            <div id="hp-player-container">
-                <div id="hp-player"></div>
+        <div id="game">
+            <div id="ui-top">
+                <div id="hp-player-container">
+                    <div id="hp-player"></div>
+                </div>
+                <div id="hp-enemy-container">
+                    <div id="hp-enemy"></div>
+                </div>
             </div>
-            <div id="hp-enemy-container">
-                <div id="hp-enemy"></div>
+            <button id="back-btn" onclick="goBack()">Kembali</button>
+            <div id="zoom-controls">
+                <button onclick="zoomUI(0.1)">+</button>
+                <button onclick="zoomUI(-0.1)">-</button>
+            </div>
+            <div id="ground"></div>
+            <div id="player"></div>
+            <div id="enemy"></div>
+            <div id="controls">
+                <div class="btn-group">
+                    <div class="btn" id="btn-left">◀</div>
+                    <div class="btn" id="btn-right">▶</div>
+                </div>
+                <div class="btn-group">
+                    <div class="btn" id="btn-punch">👊</div>
+                </div>
+            </div>
+            <div id="game-over-screen" style="display: none;">
+                <h1 id="game-over-title">MENANG</h1>
+                <button onclick="goBack()">KEMBALI KE MENU</button>
             </div>
         </div>
-        <button id="back-btn" onclick="goBack()">Kembali</button>
-        <div id="zoom-controls">
-            <button onclick="zoomUI(0.1)">+</button>
-            <button onclick="zoomUI(-0.1)">-</button>
-        </div>
-        <div id="ground"></div>
-        <div id="player"></div>
-        <div id="enemy"></div>
-        <div id="controls">
-            <div class="btn-group">
-                <div class="btn" id="btn-left">◀</div>
-                <div class="btn" id="btn-right">▶</div>
-            </div>
-            <div class="btn-group">
-                <div class="btn" id="btn-punch">👊</div>
-            </div>
-        </div>
-        <div id="game-over-screen" style="display: none;">
-            <h1 id="game-over-title">MENANG</h1>
-            <button onclick="goBack()">KEMBALI KE MENU</button>
-        </div>
-    </div>
     </div>
     <script>
         function toggleFullscreen() {
@@ -85,12 +92,32 @@
             balil: {
                 stance: 'char/balil/balil-stance.png',
                 run: 'char/balil/balil-run.webp',
-                punch: 'char/balil/balil-punch.webp'
+                punch: 'char/balil/balil-punch.webp',
+                speed: 16,
+                punchDuration: 500,
+                damage: 5,
+                knockback: 0.4,
+                knockbackDelay: 50
             },
             pigai: {
                 stance: 'char/pigai/pigai-stance.png',
                 run: 'char/pigai/pigai-run.webp',
-                punch: 'char/pigai/pigai-punch.png'
+                punch: 'char/pigai/pigai-punch.png',
+                speed: 13,
+                punchDuration: 600,
+                damage: 6,
+                knockback: 0.7,
+                knockbackDelay: 150
+            },
+            superwok: {
+                stance: 'char/superwok/superwok-stance.png',
+                run: 'char/superwok/superwok-run.webp',
+                punch: 'char/superwok/superwok-punch.webp',
+                speed: 9,
+                punchDuration: 1000,
+                damage: 10,
+                knockback: 1.5,
+                knockbackDelay: 350
             }
         };
 
@@ -112,7 +139,6 @@
 
         let playerHp = 100;
         let enemyHp = 100;
-        const damage = 10;
         let enemyChar = null;
         let enemyX = 500;
         let enemyFacingRight = false;
@@ -121,6 +147,17 @@
         let gameActive = true;
         let playerPunchHit = false;
         let enemyPunchHit = false;
+        let isPunchingActive = false; // Cooldown state for player
+        let punchCooldownTimer = null;
+
+        const backgrounds = [
+            'background/bg-gorong.webp',
+            'background/bg-hambalang.webp',
+            'background/bg-ikn.webp',
+            'background/bg-sawit.webp',
+            'background/bg-solo.jpg',
+            'background/bg-sppg.jpg'
+        ];
 
         // Preloading Images
         function preloadAll() {
@@ -153,19 +190,29 @@
             document.getElementById('hp-enemy').style.width = Math.max(0, enemyHp) + '%';
         }
 
-        const backgrounds = [
-            'background/bg-gorong.webp',
-            'background/bg-hambalang.webp',
-            'background/bg-ikn.webp',
-            'background/bg-sawit.webp'
-        ];
+        let winCount = parseInt(localStorage.getItem('winCount')) || 0;
+
+        function updateWinDisplay() {
+            document.getElementById('win-counter').innerText = `WINS: ${winCount}`;
+            const superwokCard = document.getElementById('card-superwok');
+            const superwokLock = document.getElementById('lock-superwok');
+
+            if (winCount >= 10) {
+                superwokCard.classList.remove('locked');
+                superwokCard.onclick = () => selectChar('superwok');
+                if (superwokLock) superwokLock.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', updateWinDisplay);
 
         function selectChar(charName) {
             const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
             gameEl.style.setProperty('--bg-image', `url('${randomBg}')`);
 
             currentChar = charName;
-            enemyChar = Object.keys(chars).find(c => c !== currentChar);
+            const otherChars = Object.keys(chars).filter(c => c !== currentChar);
+            enemyChar = otherChars[Math.floor(Math.random() * otherChars.length)];
 
             menuEl.style.display = 'none';
             gameEl.style.display = 'block';
@@ -188,7 +235,7 @@
             enemyEl.style.display = 'block';
 
             updateEnemyTransform();
-            
+
             // Render awal dan jalankan loop setelah 2 detik freeze
             startGameLoop();
             if (window.startFreezeTimer) clearTimeout(window.startFreezeTimer);
@@ -220,22 +267,31 @@
         }
 
         function handleInput() {
-            if (isPunching) {
+            const charData = chars[currentChar];
+            if (isPunching && !isPunchingActive) {
+                isPunchingActive = true;
                 setAction('punch');
-            } else if (isMovingLeft || isMovingRight) {
+
+                // Reset to stance/run after animation duration
+                if (punchCooldownTimer) clearTimeout(punchCooldownTimer);
+                punchCooldownTimer = setTimeout(() => {
+                    isPunchingActive = false;
+                }, charData.punchDuration);
+
+            } else if (!isPunchingActive && (isMovingLeft || isMovingRight)) {
                 setAction('run');
                 if (isMovingLeft) {
-                    playerX -= 20; // Speed
+                    playerX -= charData.speed;
                     facingRight = false;
                     if (playerX < -80) playerX = -80;
                 }
                 if (isMovingRight) {
-                    playerX += 20; // Speed
+                    playerX += charData.speed;
                     facingRight = true;
                     if (playerX > viewportEl.clientWidth - (pWidth - 80)) playerX = viewportEl.clientWidth - (pWidth - 80);
                 }
                 updateTransform();
-            } else {
+            } else if (!isPunchingActive) {
                 setAction('stance');
             }
         }
@@ -249,22 +305,23 @@
 
         function handleEnemyAI() {
             if (!enemyChar) return;
+            const charWidth = playerEl.offsetWidth;
             const distance = enemyX - playerX;
             const absDist = Math.abs(distance);
 
-            if (absDist > 140) {
+            if (absDist > (charWidth * 0.45)) {
                 enemyAction = 'run';
                 if (distance > 0) {
-                    enemyX -= 18;
+                    enemyX -= (chars[enemyChar].speed - 2); // AI slightly slower for balance
                     enemyFacingRight = false;
                 } else {
-                    enemyX += 18;
+                    enemyX += (chars[enemyChar].speed - 2);
                     enemyFacingRight = true;
                 }
             } else {
                 if (Math.random() < 0.1) {
                     enemyAction = 'punch';
-                    enemyPunchTimer = 10;
+                    enemyPunchTimer = Math.floor(chars[enemyChar].punchDuration / 40); // Convert ms to game frames
                 } else if (enemyPunchTimer <= 0) {
                     enemyAction = 'stance';
                 }
@@ -277,40 +334,52 @@
         }
 
         function checkHit() {
+            const charWidth = playerEl.offsetWidth;
             const distance = Math.abs(playerX - enemyX);
-            const reach = 150;
-            const knockbackDist = 200;
+            const reach = charWidth * 0.45;
+            pWidth = charWidth;
 
-            if (isPunching && !playerPunchHit) {
+            // Player hitting enemy
+            if (isPunchingActive && !playerPunchHit) {
                 if (distance < reach && ((facingRight && enemyX > playerX) || (!facingRight && enemyX < playerX))) {
-                    enemyHp -= damage;
+                    const charData = chars[currentChar];
+                    enemyHp -= charData.damage;
                     playerPunchHit = true;
                     new Audio('ugh.mp3').play().catch(e => console.log(e));
 
-                    // Knockback enemy
-                    if (facingRight) enemyX += knockbackDist;
-                    else enemyX -= knockbackDist;
+                    // Knockback enemy based on attacker's knockback value after delay
+                    setTimeout(() => {
+                        if (!gameActive) return;
+                        const knockbackDist = charWidth * charData.knockback;
+                        if (facingRight) enemyX += knockbackDist;
+                        else enemyX -= knockbackDist;
 
-                    if (enemyX < -80) enemyX = -80;
-                    if (enemyX > viewportEl.clientWidth - (pWidth - 80)) enemyX = viewportEl.clientWidth - (pWidth - 80);
+                        if (enemyX < -80) enemyX = -80;
+                        if (enemyX > viewportEl.clientWidth - (pWidth - 80)) enemyX = viewportEl.clientWidth - (pWidth - 80);
+                    }, charData.knockbackDelay);
 
                     checkGameOver();
                 }
             }
-            if (!isPunching) playerPunchHit = false;
+            if (!isPunchingActive) playerPunchHit = false;
 
             if (enemyAction === 'punch' && !enemyPunchHit) {
                 if (distance < reach && ((enemyFacingRight && playerX > enemyX) || (!enemyFacingRight && playerX < enemyX))) {
-                    playerHp -= damage;
+                    const enemyCharData = chars[enemyChar];
+                    playerHp -= enemyCharData.damage;
                     enemyPunchHit = true;
                     new Audio('ugh.mp3').play().catch(e => console.log(e));
 
-                    // Knockback player
-                    if (enemyFacingRight) playerX += knockbackDist;
-                    else playerX -= knockbackDist;
+                    // Knockback player based on enemy's knockback value after delay
+                    setTimeout(() => {
+                        if (!gameActive) return;
+                        const knockbackDist = charWidth * enemyCharData.knockback;
+                        if (enemyFacingRight) playerX += knockbackDist;
+                        else playerX -= knockbackDist;
 
-                    if (playerX < -80) playerX = -80;
-                    if (playerX > viewportEl.clientWidth - (pWidth - 80)) playerX = viewportEl.clientWidth - (pWidth - 80);
+                        if (playerX < -80) playerX = -80;
+                        if (playerX > viewportEl.clientWidth - (pWidth - 80)) playerX = viewportEl.clientWidth - (pWidth - 80);
+                    }, enemyCharData.knockbackDelay);
 
                     checkGameOver();
                 }
@@ -331,6 +400,9 @@
                 } else {
                     goTitle.innerText = "KAMU MENANG!";
                     goTitle.className = "win-text";
+                    winCount++;
+                    localStorage.setItem('winCount', winCount);
+                    updateWinDisplay();
                 }
 
                 setTimeout(() => {
