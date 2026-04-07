@@ -107,7 +107,7 @@
                 punchDuration: 600,
                 damage: 6,
                 knockback: 0.7,
-                knockbackDelay: 150
+                knockbackDelay: 50
             },
             superwok: {
                 stance: 'char/superwok/superwok-stance.png',
@@ -115,7 +115,7 @@
                 punch: 'char/superwok/superwok-punch.webp',
                 speed: 9,
                 punchDuration: 1000,
-                damage: 10,
+                damage: 11,
                 knockback: 1.5,
                 knockbackDelay: 350
             }
@@ -308,27 +308,33 @@
             const charWidth = playerEl.offsetWidth;
             const distance = enemyX - playerX;
             const absDist = Math.abs(distance);
+            const reach = charWidth * 0.45;
 
-            if (absDist > (charWidth * 0.45)) {
-                enemyAction = 'run';
-                if (distance > 0) {
-                    enemyX -= (chars[enemyChar].speed - 2); // AI slightly slower for balance
-                    enemyFacingRight = false;
-                } else {
-                    enemyX += (chars[enemyChar].speed - 2);
-                    enemyFacingRight = true;
-                }
-            } else {
-                if (Math.random() < 0.1) {
-                    enemyAction = 'punch';
-                    enemyPunchTimer = Math.floor(chars[enemyChar].punchDuration / 40); // Convert ms to game frames
-                } else if (enemyPunchTimer <= 0) {
-                    enemyAction = 'stance';
-                }
-            }
+            // Jika musuh sedang memukul, biarkan durasinyaselesai
             if (enemyPunchTimer > 0) {
                 enemyAction = 'punch';
                 enemyPunchTimer--;
+            } else {
+                // Jika tidak sedang memukul, tentukan gerakan
+                if (absDist > reach) {
+                    enemyAction = 'run';
+                    if (distance > 0) {
+                        enemyX -= (chars[enemyChar].speed - 2);
+                        enemyFacingRight = false;
+                    } else {
+                        enemyX += (chars[enemyChar].speed - 2);
+                        enemyFacingRight = true;
+                    }
+                } else {
+                    // Jika dalam jangkauan, ada peluang untuk memukul
+                    if (Math.random() < 0.05) {
+                        enemyAction = 'punch';
+                        // Hitung frame berdasarkan 40 FPS (1000ms / 40 = 25ms per frame)
+                        enemyPunchTimer = Math.floor(chars[enemyChar].punchDuration / 25);
+                    } else {
+                        enemyAction = 'stance';
+                    }
+                }
             }
             enemyEl.style.backgroundImage = `url('${chars[enemyChar][enemyAction]}')`;
         }
