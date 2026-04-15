@@ -37,7 +37,7 @@
                     <div class="char-name">SUPERWOK</div>
                     <div class="lock-icon" id="lock-superwok">
                         🔒
-                        <div class="unlock-hint" id="hint-superwok">10 WIN</div>
+                        <div class="unlock-hint" id="hint-superwok">5 WIN</div>
                     </div>
                 </div>
                 <div id="card-ngutangkhamun" class="card locked">
@@ -45,7 +45,7 @@
                     <div class="char-name">NGUTANGKHAMUN</div>
                     <div class="lock-icon" id="lock-ngutangkhamun">
                         🔒
-                        <div class="unlock-hint" id="hint-ngutangkhamun">15 WIN</div>
+                        <div class="unlock-hint" id="hint-ngutangkhamun">10 WIN</div>
                     </div>
                 </div>
             </div>
@@ -218,13 +218,13 @@
             const ngutangkhamunCard = document.getElementById('card-ngutangkhamun');
             const ngutangkhamunLock = document.getElementById('lock-ngutangkhamun');
 
-            if (winCount >= 10) {
+            if (winCount >= 5) {
                 superwokCard.classList.remove('locked');
                 superwokCard.onclick = () => selectChar('superwok');
                 if (superwokLock) superwokLock.style.display = 'none';
             }
 
-            if (winCount >= 15) {
+            if (winCount >= 10) {
                 ngutangkhamunCard.classList.remove('locked');
                 ngutangkhamunCard.onclick = () => selectChar('ngutangkhamun');
                 if (ngutangkhamunLock) ngutangkhamunLock.style.display = 'none';
