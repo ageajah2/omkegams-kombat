@@ -32,6 +32,10 @@
                     <img src="char/pigai/pigai-card.jpg" alt="Pigai">
                     <div class="char-name">PIGAI</div>
                 </div>
+                <div class="card" onclick="selectChar('ketua')">
+                    <img src="char/ketuambg/ketua-card.webp" alt="Ketua">
+                    <div class="char-name">KETUA MBG</div>
+                </div>
                 <div id="card-superwok" class="card locked">
                     <img src="char/superwok/superwok-card.jpg" alt="Superwok">
                     <div class="char-name">SUPERWOK</div>
@@ -101,7 +105,7 @@
                 stance: 'char/balil/balil-stance.png',
                 run: 'char/balil/balil-run.webp',
                 punch: 'char/balil/balil-punch.webp',
-                speed: 16,
+                speed: 15,
                 punchDuration: 500,
                 damage: 5,
                 knockback: 0.4,
@@ -116,6 +120,16 @@
                 damage: 6,
                 knockback: 0.7,
                 knockbackDelay: 50
+            },
+            ketua: {
+                stance: 'char/ketuambg/ketua-stance.png',
+                run: 'char/ketuambg/ketua-run.webp',
+                punch: 'char/ketuambg/ketua-punch.webp',
+                speed: 18,
+                punchDuration: 700,
+                damage: 7,
+                knockback: 0.8,
+                knockbackDelay: 200
             },
             superwok: {
                 stance: 'char/superwok/superwok-stance.png',
@@ -132,10 +146,10 @@
                 run: 'char/ngutangkhamun/ngtn-run.webp',
                 punch: 'char/ngutangkhamun/ngtn-punch.webp',
                 speed: 9,
-                punchDuration: 1600,
-                damage: 16,
+                punchDuration: 800,
+                damage: 8,
                 knockback: 1,
-                knockbackDelay: 1200
+                knockbackDelay: 500
             }
         };
 
@@ -183,6 +197,7 @@
                 ...backgrounds,
                 'char/balil/balil-card.jpg',
                 'char/pigai/pigai-card.jpg',
+                'char/ketuambg/ketua-card.webp',
                 'char/superwok/superwok-card.jpg',
                 'char/ngutangkhamun/ngtn-card.webp'
             ];
